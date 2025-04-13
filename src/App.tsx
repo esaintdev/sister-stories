@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
 import Documentaries from "./pages/Documentaries";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/podcasts" element={<Podcasts />} />
           <Route path="/documentaries" element={<Documentaries />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} /> {/* New route for individual blog posts */}
           <Route path="/contact" element={<Contact />} />
           
           {/* Admin Routes */}
