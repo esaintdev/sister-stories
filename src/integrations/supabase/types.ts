@@ -9,7 +9,132 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          author: string
+          category: string
+          content: string
+          created_at: string | null
+          date: string | null
+          excerpt: string
+          id: string
+          image_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author: string
+          category: string
+          content: string
+          created_at?: string | null
+          date?: string | null
+          excerpt: string
+          id?: string
+          image_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string
+          created_at?: string | null
+          date?: string | null
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      documentaries: {
+        Row: {
+          coming_soon: boolean | null
+          created_at: string | null
+          description: string
+          director: string
+          duration: string
+          id: string
+          image_url: string | null
+          release_date: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          coming_soon?: boolean | null
+          created_at?: string | null
+          description: string
+          director: string
+          duration: string
+          id?: string
+          image_url?: string | null
+          release_date: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          coming_soon?: boolean | null
+          created_at?: string | null
+          description?: string
+          director?: string
+          duration?: string
+          id?: string
+          image_url?: string | null
+          release_date?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      podcasts: {
+        Row: {
+          audio_url: string | null
+          created_at: string | null
+          date: string | null
+          description: string
+          duration: string
+          guest: string | null
+          host: string
+          id: string
+          image_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          created_at?: string | null
+          date?: string | null
+          description: string
+          duration: string
+          guest?: string | null
+          host: string
+          id?: string
+          image_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          created_at?: string | null
+          date?: string | null
+          description?: string
+          duration?: string
+          guest?: string | null
+          host?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
