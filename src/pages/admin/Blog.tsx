@@ -23,7 +23,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/use-toast";
-import { PlusCircle, Pencil, Trash2, Calendar } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, Calendar, UploadCloud, X } from "lucide-react";
 
 type BlogPost = {
   id: string;
@@ -50,6 +50,11 @@ const AdminBlog = () => {
     author: "",
     date: new Date().toISOString(),
   });
+  
+  // New state for file upload
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Fetch blog posts
   const { data: blogPosts = [], isLoading } = useQuery({
@@ -73,9 +78,76 @@ const AdminBlog = () => {
     }
   });
 
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.includes('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSelectedFile(file);
+    
+    // Create preview URL
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    
+    // Clear old image_url
+    setFormData({
+      ...formData,
+      image_url: "",
+    });
+  };
+
+  // Handle file upload
+  const uploadImage = async (file: File): Promise<string> => {
+    setIsUploading(true);
+    try {
+      // Create a unique file name using timestamp
+      const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      
+      // Upload the file to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('blog-images')
+        .upload(fileName, file);
+        
+      if (error) throw error;
+      
+      // Get the public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(fileName);
+      
+      return publicUrlData.publicUrl;
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   // Create or update blog post
   const mutation = useMutation({
     mutationFn: async (blogPost: typeof formData & { id?: string }) => {
+      let imageUrl = blogPost.image_url;
+      
+      // If there's a selected file, upload it first
+      if (selectedFile) {
+        imageUrl = await uploadImage(selectedFile);
+      }
+      
       let response;
       
       if (selectedBlogPost) {
@@ -86,7 +158,7 @@ const AdminBlog = () => {
             title: blogPost.title,
             excerpt: blogPost.excerpt,
             content: blogPost.content,
-            image_url: blogPost.image_url || null,
+            image_url: imageUrl || null,
             category: blogPost.category,
             author: blogPost.author,
             date: blogPost.date,
@@ -101,7 +173,7 @@ const AdminBlog = () => {
             title: blogPost.title,
             excerpt: blogPost.excerpt,
             content: blogPost.content,
-            image_url: blogPost.image_url || null,
+            image_url: imageUrl || null,
             category: blogPost.category,
             author: blogPost.author,
             date: blogPost.date,
@@ -115,7 +187,13 @@ const AdminBlog = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
       queryClient.invalidateQueries({ queryKey: ["blog-posts-count"] });
+      queryClient.invalidateQueries({ queryKey: ["recent-blog-posts"] });
       setIsOpen(false);
+      
+      // Reset upload states
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      
       toast({
         title: selectedBlogPost ? "Blog post updated" : "Blog post created",
         description: selectedBlogPost
@@ -145,6 +223,7 @@ const AdminBlog = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
       queryClient.invalidateQueries({ queryKey: ["blog-posts-count"] });
+      queryClient.invalidateQueries({ queryKey: ["recent-blog-posts"] });
       setIsDeleteConfirmOpen(false);
       toast({
         title: "Blog post deleted",
@@ -184,6 +263,8 @@ const AdminBlog = () => {
       author: "",
       date: new Date().toISOString(),
     });
+    setSelectedFile(null);
+    setPreviewUrl(null);
     setIsOpen(true);
   };
 
@@ -198,12 +279,21 @@ const AdminBlog = () => {
       author: blogPost.author,
       date: blogPost.date,
     });
+    // Reset the file input
+    setSelectedFile(null);
+    setPreviewUrl(blogPost.image_url);
     setIsOpen(true);
   };
 
   const openDeleteConfirm = (blogPost: BlogPost) => {
     setSelectedBlogPost(blogPost);
     setIsDeleteConfirmOpen(true);
+  };
+
+  // Clear selected file
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
   };
 
   return (
@@ -322,16 +412,54 @@ const AdminBlog = () => {
             </div>
 
             <div className="grid gap-2">
-              <label htmlFor="image_url" className="text-sm font-medium">
-                Image URL (optional)
+              <label htmlFor="image" className="text-sm font-medium">
+                Image
               </label>
-              <Input
-                id="image_url"
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-              />
+              <div className="space-y-3">
+                {/* Image Upload */}
+                <div className="flex gap-2">
+                  <label
+                    htmlFor="image-upload"
+                    className="flex h-10 w-full cursor-pointer items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-foreground file:text-sm hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <UploadCloud className="mr-2 h-4 w-4" />
+                    <span>{selectedFile ? selectedFile.name : "Upload Image"}</span>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                  {(selectedFile || previewUrl) && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={clearSelectedFile}
+                      className="flex-shrink-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+
+                {/* Image Preview */}
+                {previewUrl && (
+                  <div className="relative h-40 w-full overflow-hidden rounded-md border">
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1159&q=80";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -395,9 +523,9 @@ const AdminBlog = () => {
               <Button
                 type="submit"
                 className="bg-brand-purple hover:bg-brand-deep-purple"
-                disabled={mutation.isPending}
+                disabled={mutation.isPending || isUploading}
               >
-                {mutation.isPending
+                {(mutation.isPending || isUploading)
                   ? "Saving..."
                   : selectedBlogPost
                   ? "Update Blog Post"
