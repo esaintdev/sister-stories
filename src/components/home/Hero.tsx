@@ -33,7 +33,7 @@ const Hero = () => {
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-brand-purple/10 to-brand-magenta/10 py-16 md:py-24">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="animate-enter">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-brand-purple to-brand-magenta bg-clip-text text-transparent">
