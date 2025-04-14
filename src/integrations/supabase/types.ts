@@ -93,6 +93,42 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_content: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string | null
+          learn_more_url: string | null
+          listen_now_url: string | null
+          section_type: string
+          subtitle: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          image_url?: string | null
+          learn_more_url?: string | null
+          listen_now_url?: string | null
+          section_type: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          learn_more_url?: string | null
+          listen_now_url?: string | null
+          section_type?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       podcasts: {
         Row: {
           audio_url: string | null
