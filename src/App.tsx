@@ -17,6 +17,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminLogin from "./pages/admin/Login";
+import AdminSetup from "./pages/admin/Setup";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminPodcasts from "./pages/admin/Podcasts";
 import AdminDocumentaries from "./pages/admin/Documentaries";
@@ -40,8 +41,9 @@ const App = () => (
             <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />
             
-            {/* Admin Login Route */}
+            {/* Admin Login and Setup Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/setup" element={<AdminSetup />} />
             
             {/* Protected Admin Routes */}
             <Route path="/admin" element={

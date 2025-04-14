@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -109,14 +109,17 @@ const AdminLogin = () => {
               className="w-full bg-brand-purple hover:bg-brand-deep-purple"
               disabled={isLoading}
             >
-              {isLoading ? "Loading..." : "Login"}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
         
-        <CardFooter className="flex justify-center text-sm text-muted-foreground">
+        <CardFooter className="flex flex-col gap-4 text-sm text-muted-foreground">
           <p>
             Only authorized administrators can access this area.
+          </p>
+          <p>
+            Need to create an admin account? <Link to="/admin/setup" className="text-brand-purple hover:underline">Setup Admin</Link>
           </p>
         </CardFooter>
       </Card>
