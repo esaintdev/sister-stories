@@ -1,11 +1,22 @@
 
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sidebar, SidebarContent, SidebarProvider, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const AdminLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut, user } = useAuth();
   const currentPath = location.pathname.split('/').pop() || "";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/admin/login");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -14,9 +25,22 @@ const AdminLayout = () => {
           <Link to="/admin" className="text-2xl font-bold">
             Sister Stories Admin
           </Link>
-          <Link to="/" className="text-sm hover:underline">
-            Back to Site
-          </Link>
+          <div className="flex items-center gap-4">
+            <span className="text-sm hidden md:block">
+              Logged in as {user?.email}
+            </span>
+            <Button 
+              variant="ghost" 
+              className="text-white hover:bg-white/20" 
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign out
+            </Button>
+            <Link to="/" className="text-sm hover:underline">
+              Back to Site
+            </Link>
+          </div>
         </div>
       </header>
 

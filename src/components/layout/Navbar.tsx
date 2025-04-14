@@ -52,11 +52,6 @@ const Navbar = () => {
             <Button className="bg-brand-purple hover:bg-brand-deep-purple text-white">
               Subscribe
             </Button>
-            <Link to="/admin">
-              <Button variant="outline" className="border-brand-purple text-brand-purple">
-                Admin
-              </Button>
-            </Link>
           </div>
         </ul>
 
@@ -78,11 +73,6 @@ const Navbar = () => {
               <Button className="bg-brand-purple hover:bg-brand-deep-purple text-white w-40">
                 Subscribe
               </Button>
-              <Link to="/admin" onClick={toggleMenu} className="w-40">
-                <Button variant="outline" className="border-brand-purple text-brand-purple w-full">
-                  Admin
-                </Button>
-              </Link>
             </ul>
           </div>
         )}
