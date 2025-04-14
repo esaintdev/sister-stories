@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -53,6 +52,11 @@ const AdminLayout = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild isActive={currentPath === "admin" || currentPath === ""}>
                       <Link to="/admin">Dashboard</Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={currentPath === "homepage"}>
+                      <Link to="/admin/homepage">Homepage</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>

@@ -55,6 +55,7 @@ const App = () => (
               <Route path="podcasts" element={<AdminPodcasts />} />
               <Route path="documentaries" element={<AdminDocumentaries />} />
               <Route path="blog" element={<AdminBlog />} />
+              <Route path="homepage" element={<AdminHomepage />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
